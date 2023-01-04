@@ -9,7 +9,7 @@ pipeline {
         stage('Build Docker File') {
             steps {
                 sh 'docker build . -t ayomide_test'
-                sh 'docker run -d -p 7000:7000 ayomide_test'
+                sh 'docker run -d -p 81:7000 ayomide_test'
             }
         }
     }
