@@ -1,11 +1,59 @@
 pipeline {
     agent any
+    
     stages {
+
+        stage('Send Start Alert') {
+        steps {
+            script {
+            telegramSend(
+                token: '5451305173:AAGSmRL_518hBsPx3N_Zih_cy0oeMbZhpyI',
+                chatId: '-688306623',
+                message: "Ayomide's Test is currently running."
+            )
+            }
+        }
+        }
+
+        stage('Software Composition Analysis Test') {
+            steps {
+                // Install Python 
+                sh 'sudo apt install python'
+                // Install and upgrade pip
+                sh 'python -m ensurepip --upgrade'
+                // Install Syft CLI
+                sh 'pip install syft'
+                // Run Syft scan on codebase
+                sh 'syft scan -o syft-report.json'        
+            }
+        }
+
+
+        // Building and Testing the application.
+        stage('Install') {
+            steps {
+            
+            // Check Syft report for any vulnerabilities or license issues
+                def report = readJSON file: 'syft-report.json'
+                def message
+                if (report.vulnerabilities > 0 || report.license_issues > 0) {
+                message = 'Syft scan identified vulnerabilities or license issues. Build terminated.'
+                error message
+                } else {
+                message = 'Syft scan completed successfully. No vulnerabilities or license issues detected.'
+                }
+                // Send message to Telegram bot
+                sh "curl -X POST -H 'Content-Type: application/json' -d '{\"chat_id\": \"-688306623\", \"text\": \"${message}\"}' https://api.telegram.org/bot5451305173:AAGSmRL_518hBsPx3N_Zih_cy0oeMbZhpyI/sendMessage"
+            }
+
+        }
+
         stage('Install docker Engine') {
             steps {
                 sh 'sudo apt update && sudo apt install docker.io -y &&   sudo snap install docker'
             }
         }
+
         stage('Build Docker File') {
             steps {
                 sh 'docker build . -t ayomide_test'
