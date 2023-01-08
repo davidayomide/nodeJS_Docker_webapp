@@ -38,13 +38,12 @@ pipeline {
                 // Install Python 
             //    sh 'sudo apt update'
             //    sh 'sudo apt install python3'
-                // Install and upgrade pip
-                // sh 'yes | sudo apt install python3-pip'
-                // Install Syft CLI
-            //    sh 'sudo su'
-            //    sh 'sudo curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin'
-            //    sh 'exit'
-                // sh 'yes | pip3 install syft'
+
+                // Download & Install Syft CLI
+                sh 'sudo su'
+                sh 'sudo curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin'
+                sh 'exit'
+                
                 // Run Syft scan on codebase
                 sh 'syft ayomide_test -o syft-json=syft-report.json'        
             }
