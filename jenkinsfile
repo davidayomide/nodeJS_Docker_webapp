@@ -80,11 +80,11 @@ pipeline {
         }        
         
         
-          stage('Start Docker Container') {
-            steps {
-                sh 'docker run -d -p 81:7000 ayomide_test'
-            }
-        }      
+          //stage('Start Docker Container') {
+           // steps {
+           //     sh 'docker run -d -p 81:7000 ayomide_test'
+           // }
+        //}      
         
     }
 }
