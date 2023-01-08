@@ -67,11 +67,17 @@ pipeline {
                     // Send message to Telegram bot
                     sh "curl -X POST -H 'Content-Type: application/json' -d '{\"chat_id\": \"-688306623\", \"text\": \"${message}\"}' https://api.telegram.org/bot5451305173:AAGSmRL_518hBsPx3N_Zih_cy0oeMbZhpyI/sendMessage"
                     // Send report notification to Telegram bot
-                    telegramSend(
-                        token: '5451305173:AAGSmRL_518hBsPx3N_Zih_cy0oeMbZhpyI',
-                        chatId: '-688306623',
-                        message: "Docker image scan complete. Here is the report:\n\n${report_1}"
-                    )
+                    sh """
+                    curl -X POST https://api.telegram.org/bot5451305173:AAGSmRL_518hBsPx3N_Zih_cy0oeMbZhpyI/sendMessage \
+                    -d chat_id=-688306623 \
+                    -d text="Here is the SBOM report:\\n\\n${report_1}"
+                    """
+                    // works if there is telegram plugin installed
+                    //telegramSend(
+                    //    token: '5451305173:AAGSmRL_518hBsPx3N_Zih_cy0oeMbZhpyI',
+                    //    chatId: '-688306623',
+                    //    message: "Docker image scan complete. Here is the report:\n\n${report_1}"
+                    //)
                 }    
             }
 
