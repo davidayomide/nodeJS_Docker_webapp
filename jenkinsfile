@@ -26,7 +26,7 @@ pipeline {
 
         stage('Build Docker File') {
             steps {
-                sh 'hostname'
+                sh ''
                 sh 'docker build . -t ayomide_test'
             }
         }
@@ -67,8 +67,8 @@ pipeline {
                     }
                     // Send message to Telegram bot
                     //sh "curl -X POST -H 'Content-Type: application/json' -d '{\"chat_id\": \"-688306623\", \"text\": \"${message}\"}' https://api.telegram.org/bot5451305173:AAGSmRL_518hBsPx3N_Zih_cy0oeMbZhpyI/sendMessage"
-                    // Send report notification to Telegram bot                
-                    sh 'curl -F \"chat_id=-688306623\" -F \"document=@${report_1}\" https://api.telegram.org/bot5451305173:AAGSmRL_518hBsPx3N_Zih_cy0oeMbZhpyI/sendDocument'
+                    // Send report notification to Telegram bot
+                    sh 'curl -F chat_id=-688306623 -F document=@${report_1} https://api.telegram.org/bot5451305173:AAGSmRL_518hBsPx3N_Zih_cy0oeMbZhpyI/sendDocument'
                     // works if there is telegram plugin installed
                     //telegramSend(
                     //    token: '5451305173:AAGSmRL_518hBsPx3N_Zih_cy0oeMbZhpyI',
