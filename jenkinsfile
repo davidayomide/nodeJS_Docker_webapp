@@ -68,9 +68,7 @@ pipeline {
                     //sh "curl -X POST -H 'Content-Type: application/json' -d '{\"chat_id\": \"-688306623\", \"text\": \"${message}\"}' https://api.telegram.org/bot5451305173:AAGSmRL_518hBsPx3N_Zih_cy0oeMbZhpyI/sendMessage"
                     // Send report notification to Telegram bot
                     sh '''
-                    echo "Docker image scan complete. Here is the report:
-
-${report_1}" | \
+                    printf "Docker image scan complete. Here is the report:\n\n${report_1}" | \
                     xargs -s 8192 -0 -n 1 curl -X POST https://api.telegram.org/bot5451305173:AAGSmRL_518hBsPx3N_Zih_cy0oeMbZhpyI/sendMessage \
                     -d chat_id=-688306623 \
                     -d text
