@@ -3,26 +3,26 @@ pipeline {
     
     stages {
 
-        stage('Send Start Alert') {
-        steps {
-            script {
-            telegramSend(
-                token: '5451305173:AAGSmRL_518hBsPx3N_Zih_cy0oeMbZhpyI',
-                chatId: '-688306623',
-                message: "Ayomide's Test is currently running."
-            )
-            }
-        }
-        }
+        //stage('Send Start Alert') {
+        //steps {
+            //script {
+            //telegramSend(
+                //token: '5451305173:AAGSmRL_518hBsPx3N_Zih_cy0oeMbZhpyI',
+                //chatId: '-688306623',
+                //message: "Ayomide's Test is currently running."
+            //)
+            //}
+        //}
+        //}
 
         // Building and Testing the application.
 
 
-        stage('Install docker Engine') {
-            steps {
-                sh 'sudo apt update && sudo apt install docker.io -y &&   sudo snap install docker'
-            }
-        }
+        //stage('Install docker Engine') {
+            //steps {
+                //sh 'sudo apt update && sudo apt install docker.io -y &&   sudo snap install docker'
+            //}
+        //}
 
         stage('Build Docker File') {
             steps {
