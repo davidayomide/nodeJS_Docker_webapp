@@ -15,7 +15,24 @@ pipeline {
         }
         }
 
-        stage('Software Composition Analysis Test') {
+        // Building and Testing the application.
+
+
+        stage('Install docker Engine') {
+            steps {
+                sh 'sudo apt update && sudo apt install docker.io -y &&   sudo snap install docker'
+            }
+        }
+
+        stage('Build Docker File') {
+            steps {
+                sh 'docker build . -t ayomide_test'
+            }
+        }
+        
+        
+        
+        stage('Software Composition Analysis Test Installation & Scan') {
             steps {
                 // Install Python 
                 sh 'sudo apt update'
@@ -28,13 +45,12 @@ pipeline {
                 sh 'exit'
                 // sh 'yes | pip3 install syft'
                 // Run Syft scan on codebase
-                sh 'syft scan -o syft-json=syft-report.json'        
+                sh 'syft scan ayomide_test -o syft-json=syft-report.json'        
             }
         }
-
-
-        // Building and Testing the application.
-        stage('Install') {
+        
+        
+        stage('SBOM Report') {
             steps {
             
             // Check Syft report for any vulnerabilities or license issues
@@ -52,19 +68,14 @@ pipeline {
                 }    
             }
 
-        }
-
-        stage('Install docker Engine') {
+        }        
+        
+        
+          stage('Start Docker Container') {
             steps {
-                sh 'sudo apt update && sudo apt install docker.io -y &&   sudo snap install docker'
-            }
-        }
-
-        stage('Build Docker File') {
-            steps {
-                sh 'docker build . -t ayomide_test'
                 sh 'docker run -d -p 81:7000 ayomide_test'
             }
-        }
+        }      
+        
     }
 }
