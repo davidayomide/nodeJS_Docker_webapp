@@ -18,7 +18,8 @@ pipeline {
         stage('Software Composition Analysis Test') {
             steps {
                 // Install Python 
-                sh 'sudo apt update && sudo apt install python3'
+                sh 'sudo apt update'
+                sh 'sudo apt install python3'
                 // Install and upgrade pip
                 sh 'python3 -m ensurepip --upgrade'
                 // Install Syft CLI
