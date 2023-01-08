@@ -26,6 +26,7 @@ pipeline {
 
         stage('Build Docker File') {
             steps {
+                sh 'hostname'
                 sh 'docker build . -t ayomide_test'
             }
         }
