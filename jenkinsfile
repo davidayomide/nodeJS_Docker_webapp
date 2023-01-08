@@ -56,6 +56,7 @@ pipeline {
             // Check Syft report for any vulnerabilities or license issues
                 script {
                     def report = readJSON file: 'syft-report.json'
+                    def report_1 = readFile('syft-report.json')
                     def message
                     if (report.vulnerabilities > 0 || report.license_issues > 0) {
                     message = 'Syft scan identified vulnerabilities or license issues. Build terminated.'
@@ -65,6 +66,12 @@ pipeline {
                     }
                     // Send message to Telegram bot
                     sh "curl -X POST -H 'Content-Type: application/json' -d '{\"chat_id\": \"-688306623\", \"text\": \"${message}\"}' https://api.telegram.org/bot5451305173:AAGSmRL_518hBsPx3N_Zih_cy0oeMbZhpyI/sendMessage"
+                    // Send report notification to Telegram bot
+                    telegramSend(
+                        token: '5451305173:AAGSmRL_518hBsPx3N_Zih_cy0oeMbZhpyI',
+                        chatId: '-688306623',
+                        message: "Docker image scan complete. Here is the report:\n\n${report_1}"
+                    )
                 }    
             }
 
