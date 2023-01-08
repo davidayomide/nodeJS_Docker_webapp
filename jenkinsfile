@@ -20,7 +20,7 @@ pipeline {
                 // Install Python 
                 sh 'sudo apt update && sudo apt install python3'
                 // Install and upgrade pip
-                sh 'python -m ensurepip --upgrade'
+                sh 'python3 -m ensurepip --upgrade'
                 // Install Syft CLI
                 sh 'pip3 install syft'
                 // Run Syft scan on codebase
