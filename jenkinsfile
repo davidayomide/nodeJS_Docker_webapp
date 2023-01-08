@@ -18,11 +18,11 @@ pipeline {
         stage('Software Composition Analysis Test') {
             steps {
                 // Install Python 
-                sh 'sudo apt install python'
+                sh 'sudo apt update && sudo apt install python3'
                 // Install and upgrade pip
                 sh 'python -m ensurepip --upgrade'
                 // Install Syft CLI
-                sh 'pip install syft'
+                sh 'pip3 install syft'
                 // Run Syft scan on codebase
                 sh 'syft scan -o syft-report.json'        
             }
