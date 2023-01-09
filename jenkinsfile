@@ -33,22 +33,20 @@ pipeline {
         
         
         
-        // stage('Software Bill of Material Analysis Tool Installation & Scan') {
-        //     steps {
+        stage('Software Bill of Material Analysis Tool Installation & Scan') {
+            steps {
               
 
-        //         // Download & Install Syft CLI
-        //         sh 'sudo su'
-        //         sh 'sudo curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin'
-        //         sh 'sudo curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin'
-        //         sh 'exit'
+                // Download & Install Syft CLI
+                sh 'sudo su'
+                sh 'sudo curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin'
+                sh 'sudo curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin'
+                sh 'exit'
                 
-        //         // Run Syft scan on codebase
-        //         sh 'time syft ayomide_test > syft-report.txt'
-        //         // Run Grype analysis
-        //         sh 'time grype ayomide_test > grype-report.txt'         
-        //     }
-        // }
+                // Run Syft scan & Grype analysis on codebase
+                sh 'sudo syft ayomide_test -o syft-json=sbom_syft.json && cat sbom_syft.json | time grype > grype-report.txt'    
+            }
+        }
         
         
         stage('SBOM & Grype Vulnerability Report') {
@@ -56,7 +54,7 @@ pipeline {
             
             // Check Syft report for any vulnerabilities or license issues
                 script {
-                    def report = readJSON('syft-report.txt')
+                    def report = readJSON('sbom_syft.json')
                     def message
                     if (report.vulnerabilities > 0 || report.license_issues > 0) {
                     message = 'Syft scan identified SBOM. Build terminated.'
@@ -68,7 +66,7 @@ pipeline {
                     sh "curl -X POST -H 'Content-Type: application/json' -d '{\"chat_id\": \"-688306623\", \"text\": \"${message}\"}' https://api.telegram.org/bot5451305173:AAGSmRL_518hBsPx3N_Zih_cy0oeMbZhpyI/sendMessage"
                     // Send report notification to Telegram bot
 
-                    sh 'sudo curl -F chat_id=-688306623 -F document=@syft-report.txt -F document=@grype-report.txt  https://api.telegram.org/bot5451305173:AAGSmRL_518hBsPx3N_Zih_cy0oeMbZhpyI/sendDocument'
+                    sh 'sudo curl -F chat_id=-688306623 -F document=@sbom_syft.json -F document=@grype-report.txt  https://api.telegram.org/bot5451305173:AAGSmRL_518hBsPx3N_Zih_cy0oeMbZhpyI/sendDocument'
                     // works if there is telegram plugin installed
                     //telegramSend(
                     //    token: '5451305173:AAGSmRL_518hBsPx3N_Zih_cy0oeMbZhpyI',
