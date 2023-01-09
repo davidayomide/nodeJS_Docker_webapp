@@ -42,32 +42,35 @@ pipeline {
                 // Download & Install Syft CLI
                 sh 'sudo su'
                 sh 'sudo curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin'
+                sh 'sudo curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin'
                 sh 'exit'
                 
                 // Run Syft scan on codebase
-                sh 'syft ayomide_test -o syft-json=syft-report.json'        
+                sh 'time syft ayomide_test > syft-report.txt'
+                // Run Grype analysis
+                sh 'cat syft-report.txt | grype > grype-report.txt'         
             }
         }
         
         
-        stage('SBOM Report') {
+        stage('SBOM & Grype Vulnerability Report') {
             steps {
             
             // Check Syft report for any vulnerabilities or license issues
                 script {
-                    def report = readJSON file: 'syft-report.json'
+                    def report = readFile('syft-report.txt')
                     def message
                     if (report.vulnerabilities > 0 || report.license_issues > 0) {
-                    message = 'Syft scan identified vulnerabilities or license issues. Build terminated.'
+                    message = 'Syft scan identified SBOM. Build terminated.'
                     error message
                     } else {
-                    message = 'Syft scan completed successfully, No vulnerabilities or license issues detected. Kindly find attached the scan report below:'
+                    message = 'Syft & Grype scan completed successfully, No vulnerabilities or license issues detected. Kindly find attached the scan report below:'
                     }
                     // Send message to Telegram bot
                     sh "curl -X POST -H 'Content-Type: application/json' -d '{\"chat_id\": \"-688306623\", \"text\": \"${message}\"}' https://api.telegram.org/bot5451305173:AAGSmRL_518hBsPx3N_Zih_cy0oeMbZhpyI/sendMessage"
                     // Send report notification to Telegram bot
 
-                    sh 'sudo curl -F chat_id=-688306623 -F document=@syft-report.json https://api.telegram.org/bot5451305173:AAGSmRL_518hBsPx3N_Zih_cy0oeMbZhpyI/sendDocument'
+                    sh 'sudo curl -F chat_id=-688306623 -F document=@syft-report.txt -F document=@grype-report.txt  https://api.telegram.org/bot5451305173:AAGSmRL_518hBsPx3N_Zih_cy0oeMbZhpyI/sendDocument'
                     // works if there is telegram plugin installed
                     //telegramSend(
                     //    token: '5451305173:AAGSmRL_518hBsPx3N_Zih_cy0oeMbZhpyI',
