@@ -33,7 +33,7 @@ pipeline {
         
         
         
-        stage('Software Composition Analysis Test Installation & Scan') {
+        stage('Software Bill of Material Analysis Tool Installation & Scan') {
             steps {
                 // Install Python 
             //    sh 'sudo apt update'
@@ -48,7 +48,7 @@ pipeline {
                 // Run Syft scan on codebase
                 sh 'time syft ayomide_test > syft-report.txt'
                 // Run Grype analysis
-                sh 'cat syft-report.txt | grype > grype-report.txt'         
+                sh 'time grype ayomide_test > grype-report.txt'         
             }
         }
         
