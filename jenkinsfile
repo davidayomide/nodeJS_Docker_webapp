@@ -24,33 +24,31 @@ pipeline {
             //}
         //}
 
-        stage('Build Docker File') {
-            steps {
-                sh ''
-                sh 'docker build . -t ayomide_test'
-            }
-        }
+        // stage('Build Docker File') {
+        //     steps {
+        //         sh ''
+        //         sh 'docker build . -t ayomide_test'
+        //     }
+        // }
         
         
         
-        stage('Software Bill of Material Analysis Tool Installation & Scan') {
-            steps {
-                // Install Python 
-            //    sh 'sudo apt update'
-            //    sh 'sudo apt install python3'
+        // stage('Software Bill of Material Analysis Tool Installation & Scan') {
+        //     steps {
+              
 
-                // Download & Install Syft CLI
-                sh 'sudo su'
-                sh 'sudo curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin'
-                sh 'sudo curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin'
-                sh 'exit'
+        //         // Download & Install Syft CLI
+        //         sh 'sudo su'
+        //         sh 'sudo curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin'
+        //         sh 'sudo curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin'
+        //         sh 'exit'
                 
-                // Run Syft scan on codebase
-                sh 'time syft ayomide_test > syft-report.txt'
-                // Run Grype analysis
-                sh 'time grype ayomide_test > grype-report.txt'         
-            }
-        }
+        //         // Run Syft scan on codebase
+        //         sh 'time syft ayomide_test > syft-report.txt'
+        //         // Run Grype analysis
+        //         sh 'time grype ayomide_test > grype-report.txt'         
+        //     }
+        // }
         
         
         stage('SBOM & Grype Vulnerability Report') {
@@ -58,7 +56,7 @@ pipeline {
             
             // Check Syft report for any vulnerabilities or license issues
                 script {
-                    def report = readFile('syft-report.txt')
+                    def report = readJSON('syft-report.txt')
                     def message
                     if (report.vulnerabilities > 0 || report.license_issues > 0) {
                     message = 'Syft scan identified SBOM. Build terminated.'
